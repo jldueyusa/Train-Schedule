@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <title>Train</title>
     <!-- Link to bootstra[] -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- Link to css -->
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <!-- Link to font Awesome -->
@@ -16,9 +16,9 @@
 
     <!-- Link to jquery -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
 
-    <!--add Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/5.10.0/firebase.js"></script>
 
 
 </head>
@@ -71,10 +71,145 @@
     </div>
 
     <!--form fields-->
+    <form>
+
+        <div class="form-group">
+            <label for="formGroupExampleInput">Train Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Example Input">
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Destination</label>
+            <input type="text" class="form-control" id="destination" placeholder="Example Input">
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">First Train Name</label>
+            <input type="text" class="form-control" id="firstTrain" placeholder="Example Input">
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Frequency (Minutes)</label>
+            <input type="text" class="form-control" id="frequency" placeholder="HH:MM">
+        </div>
+
+
+
+    </form>
+
     <!--Submit button-->
-    
-    
+
+    <button type="submit" class="btn btn-primary" id="addTrain">Submit Train </button>
+    <!--couple breaks so my button doesn't touch the bottom of the browser-->
     <br><br>
+    <!--link my firebase-->
+
+    <script src="https://www.gstatic.com/firebasejs/5.10.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyDvS7Tm40fc-md01L8RpeKBjyfxOgSwuCs",
+            authDomain: "train-scheduler-ed5ac.firebaseapp.com",
+            databaseURL: "https://train-scheduler-ed5ac.firebaseio.com",
+            projectId: "train-scheduler-ed5ac",
+            storageBucket: "train-scheduler-ed5ac.appspot.com",
+            messagingSenderId: "595820922545"
+        };
+        firebase.initializeApp(config);
+
+        let database = firebase.database();
+
+        //enter to firebase when button is clicked
+        $("#addTrain").on("click", function (event) {
+            event.preventDefault();
+
+            //assign variables from the user input
+
+            let trainName = $("#name").val().trim();
+            let destination = $("#destination").val().trim();
+            let firstTrain = $("#firstTrain").val().trim();
+            let frequency = $("#frequency").val().trim();
+
+            //train data
+            let tempTrain = {
+                name: trainName,
+                destination: destination,
+                firstTrain: firstTrain,
+                frequency: frequency,
+            };
+
+            //train data to add to the database
+            database.ref().push(tempTrain);
+
+            console.log("items pushed to database");
+            console.log(tempTrain.name);
+            console.log(tempTrain.destination);
+            console.log(tempTrain.firstTrain);
+            console.log(tempTrain.frequency);
+
+            // Clears all of the text-boxes
+            $("#name").val("");
+            $("#destination").val("");
+            $("#firstTrain").val("");
+            $("#frequency").val("");
+
+        });
+
+
+        //create the even that grabs the data and puts it back to html
+        database.ref().on("child_added", function (snapshot, prevChildKey) {
+
+            console.log(snapshot.val());
+
+            //put everything in variables
+
+            let snapName = snapshot.val().name;
+            let snapDestination = snapshot.val().destination;
+            let snapFirstTrain = snapshot.val().firstTrain;
+            let snapFrequency = snapshot.val().frequency;
+
+            let timeArr = snapFirstTrain.split(":");
+            let trainTime = moment().hours(timeArr[0]).minutes(timeArr[1]);
+
+            let maxMoment = moment.max(moment(), trainTime);
+
+            let tMinutes;
+            let tArrival;
+
+            //if the first train is later than the current train, set arrival to the first train time
+            if (maxMoment === trainTime) {
+                tArrival = trainTime.format("hh:mm A");
+                tMinutes = trainTime.diff(moment(), "minutes");
+            }
+            else {
+                //minutes to arrival
+                let differenceTimes = moment().diff(trainTime, "minutes");
+                let tRemainder = differenceTimes % snapFrequency;
+                tMinutes = snapFrequency - tRemainder;
+                //calculating the arrival time
+                tArrival = moment().add(tMinutes, "m").format("hh:mm A");
+            }
+            console.log("tMinutes" + tMinutes);
+            console.log("tArrival" + tArrival);
+
+            //add data to column-broken
+            $("#train-list").append(`<tr>
+    <th scope = "row">$(snapName)</th>
+    <td>$(snapDestination)</td>
+    <td>$(snapFrequency)</td>
+    <td>$(tArrival)</td>
+    <td>$(tMinutes)</td>
+</tr>`
+
+
+            )
+
+
+
+        })
+
+
+
+
+    </script>
+
 </body>
 
 </html>
