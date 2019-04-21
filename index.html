@@ -14,6 +14,9 @@
    
    <!-- Link to jquery -->
    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+   <!--add Firebase -->
+   <script src="https://www.gstatic.com/firebasejs/5.10.0/firebase.js"></script>
    
 
 </head>
@@ -21,41 +24,36 @@
 <body>
 
 <!-- start making container -->
-<div class="container">
-  <div class="jumbotron">
-  <h1><i class="fa fa-train" aria-hidden="true"></i>Train Schedule</h1>
-     <h3>All Aboard!</h3>
 
+  <div class="jumbotron jumbotron-fluid bg-dark">
+   <div class="container">   
+  <h1 class = "display-4"><i class="fa fa-train" aria-hidden="true"></i>Train Schedule</h1>
+    <p class = "lead">All Aboard!!!</p>
+    </div>
 
 </div>
+<h3 class = "m-3">Take a look at the train schedule</h3>
+<br>
 
-<div class="row">
 
-<div class="col-lg-12">
-<!--result-->
-  <div class="panel panel-primary">
-  <div class="panel-heading"><i class="fa fa-train" aria-hidden="true"></i>Current Train Schedule</div>
-     <div class="panel-body">
-       <table class="set">
-         <thead>
-          <tr>
-            <th>Train Name</th>
-            <th>Destination</th>
-            <th>Frequency (min)</th>
-            <th>Next Arrival</th>
-            <th>Minutes Away</th>
-          </tr>
-          </thead>
-          <tbody>
 
-          </tbody>
-          </table>
-       </div>
-      </div>
+<!--set up the table for Firebase-->
+  <table class = "table table-dark" id="trainSchedule">
+<thead>
 
- </div>
+<tr>
 
-  </div>
+    <th scope = "col">Train Name</th>
+    <th scope = "col">Destination</th>
+    <th scope = "col">Frequency</th>
+    <th scope = "col">Next Train Arrival</th>
+    <th scope = "col">Minutes from now</th>
+
+
+</tr>
+
+</thead> 
+  </table>
 
 
 
