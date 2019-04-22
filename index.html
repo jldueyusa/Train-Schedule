@@ -83,11 +83,11 @@
         </div>
         <div class="form-group">
             <label for="formGroupExampleInput">First Train Name</label>
-            <input type="text" class="form-control" id="firstTrain" placeholder="Example Input">
+            <input type="time" class="form-control" id="firstTrain" placeholder="HH:MM">
         </div>
         <div class="form-group">
             <label for="formGroupExampleInput">Frequency (Minutes)</label>
-            <input type="text" class="form-control" id="frequency" placeholder="HH:MM">
+            <input type="number" class="form-control" id="frequency" placeholder="0000">
         </div>
 
 
@@ -168,7 +168,7 @@
             let timeArr = snapFirstTrain.split(":");
             let trainTime = moment().hours(timeArr[0]).minutes(timeArr[1]);
 
-            let maxMoment = moment.max(moment(), trainTime);
+            let maxMoment = moment().max(moment(), trainTime);
 
             let tMinutes;
             let tArrival;
@@ -191,11 +191,11 @@
 
             //add data to column-broken
             $("#train-list").append(`<tr>
-    <th scope = "row">$(snapName)</th>
-    <td>$(snapDestination)</td>
-    <td>$(snapFrequency)</td>
-    <td>$(tArrival)</td>
-    <td>$(tMinutes)</td>
+    <th scope = "row">${snapName}</th>
+    <td>${snapDestination}</td>
+    <td>${snapFrequency}</td>
+    <td>${tArrival}</td>
+    <td>${tMinutes}</td>
 </tr>`
 
 
